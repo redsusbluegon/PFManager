@@ -1,0 +1,182 @@
+﻿<Window x:Class="PFManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PFManager"
+        mc:Ignorable="d"
+        Title="PFManager" 
+        Height="450" Width="800"
+        MinHeight="450" MinWidth="800"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="None" 
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        Background="{StaticResource BackgroundMainBrush}"
+        Foreground="{StaticResource ForegroundMainBrush}">
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="1" 
+                      CornerRadius="0" 
+                      CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    <Border> 
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--#region Custom Toolbar-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.05*"/>
+                <RowDefinition Height="0.9*"/>
+            </Grid.RowDefinitions>
+            <Rectangle MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" 
+                       Grid.ColumnSpan="2" 
+                       Fill="#161616"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <TextBlock Margin="15 2 2 2" Text="PFManager v1.0.0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+                <Button x:Name="Minimize" 
+                        Style="{StaticResource ButtonStyle}"
+                        Foreground="{StaticResource ForegroundMainBrush}" 
+                        BorderThickness="0" 
+                        Click="Minimize_Click" 
+                        Margin="2 0 0 0"
+                        Width="20" Height="20" 
+                        Content="_"/>
+                <Button x:Name="Maximize"
+                        IsEnabled="False"
+                        Style="{StaticResource ButtonStyle}"
+                        Foreground="{StaticResource BackgroundSubBrush}" 
+                        Background="Transparent"
+                        BorderThickness="0" 
+                        Margin="2 0 0 0"
+                        Width="20" Height="20" 
+                        Content="🗖"/>
+                <Button x:Name="X" 
+                        Style="{StaticResource ButtonStyle}"
+                        Foreground="{StaticResource ForegroundMainBrush}" 
+                        BorderThickness="0"
+                        Click="X_Click" 
+                        Margin="2"
+                        Width="20" Height="20" 
+                        Content="X"/>
+            </StackPanel>
+            <!--#endregion-->
+            <StackPanel Grid.Row="1">
+                <ListBox x:Name="ProcessList"
+                         ItemsSource="{Binding ProcessEntries}"
+                         Width="330" Height="305" 
+                         Style="{StaticResource ListBoxStyle}"
+                         Margin="20 20 50 0" 
+                         Grid.Column="0" 
+                         BorderThickness="2"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="Purge_Click" 
+                            Style="{StaticResource ButtonStyle}"
+                            Content="Purge" 
+                            Margin="20 20 20 0" 
+                            Width="100" Height="20"/>
+                    <Button Click="Exceptions_Click" 
+                            Style="{StaticResource ButtonStyle}"
+                            Content="Exceptions" 
+                            Margin="0 20 0 0" 
+                            Width="100" Height="20"/>
+                    <!--Decided not to add this.-->
+                    <CheckBox x:Name="InverseExceptions" 
+                              Visibility="Hidden"
+                              Style="{StaticResource CheckBoxStyle}" 
+                              Click="InverseExceptions_Click" 
+                              Margin="20 22 0 0" 
+                              HorizontalAlignment="Center" 
+                              Content="Inverse Exceptions?"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <TextBlock x:Name="PollingRateText" 
+                           Margin="20 20 20 0" 
+                           Text="Polling Rate:" 
+                           TextAlignment="Center"/>
+                <ComboBox x:Name="PollingRateBox"
+                          Width="200"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Margin="0 10 0 0" 
+                          SelectedIndex="2">
+                    <ComboBoxItem Content="250ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="500ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="1000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="2000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="4000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="6000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="8000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="10000ms"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                </ComboBox>
+                <TextBlock x:Name="PurgeText" 
+                           Margin="20 20 20 0" 
+                           Text="Purge items exceeding a commit size of ?? of working set." 
+                           TextAlignment="Center"/>
+                <ComboBox Style="{DynamicResource ComboBoxStyle}"
+                          x:Name="PurgeComboBox" 
+                          SelectionChanged="PurgeComboBox_SelectionChanged"
+                          Width="200" Margin="0 10 0 0"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="2x"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="3x"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="4x"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="5x"
+                                  Style="{StaticResource ComboBoxItemStyle}"/>
+                </ComboBox>
+                <CheckBox Style="{DynamicResource CheckBoxStyle}" x:Name="AutoPurgeCheckBox" 
+                          Checked="AutoPurgeCheckBox_Checked"
+                          Margin="0 10 0 0" 
+                          HorizontalAlignment="Center" 
+                          Content="Auto-Purge?"/>
+                <CheckBox x:Name="TopMostCheckBox" 
+                            Style="{StaticResource CheckBoxStyle}" 
+                            Click="TopMostCheckBox_Click" 
+                            Margin="0 10 0 0" 
+                            HorizontalAlignment="Center" 
+                            Content="Top-Most?"/>
+                <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="StartButton" 
+                        Style="{StaticResource ButtonStyle}"
+                        Click="Start_Click" Margin="20" 
+                        HorizontalAlignment="Right" 
+                        Width="100" Height="20" 
+                        Content="Start"/>
+                <Button x:Name="StopButton"
+                        Style="{StaticResource ButtonStyle}"
+                        Click="Stop_Click" 
+                        IsEnabled="False" 
+                        Margin="20" 
+                        HorizontalAlignment="Left" 
+                        Grid.Column="1"
+                        Width="100" Height="20" 
+                        Content="Stop"/>
+                </Grid>
+                <!--Debugging TextBlock-->
+                <TextBlock x:Name="MeowText"
+                           Visibility="Hidden"
+                           Text="Meow." 
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
+         
